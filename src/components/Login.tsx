@@ -39,7 +39,7 @@ const Login = () => {
           console.error("Error storing data in localStorage:", err);
         }
         handleLogin();
-        navigate("/courses");
+        navigate("/");
       } else {
         setError(response.msg || "Login failed");
       }

@@ -5,18 +5,23 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { putData } from "@/utils/postData";
+import { Link } from "react-router-dom";
 
 type TaskProps = {
   id: string;
   title: string;
   description: string;
   status: string;
-  priority: string;
+  priority: "high" | "low" | "medium";
+  dueDate: string;
+
   onUpdate: (id: string, updatedTask: Partial<TaskProps>) => void;
 };
 
 const Task = (props: TaskProps) => {
-  const { id, title, description, status, priority, onUpdate } = props;
+  const { id, title, description, status, priority, onUpdate, dueDate } = props;
+  let due = dueDate.split("T");
+  const dueDay = due[0];
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     title,
@@ -62,7 +67,8 @@ const Task = (props: TaskProps) => {
   if (isEditing) {
     // Render Edit UI
     return (
-      <div className="edit-task w-96 bg-gray-200 p-4 rounded-md">
+      <div className="edit-task w-80 bg-gray-200 p-4 h-56 rounded-md">
+        <label className="text-sm">Title</label>
         <Input
           type="text"
           name="title"
@@ -71,36 +77,40 @@ const Task = (props: TaskProps) => {
           placeholder="Title"
           className="mb-2 p-2 border rounded w-full"
         />
+        <label className="text-sm">Description</label>
         <Textarea
           name="description"
           value={formData.description}
           onChange={handleChange}
           placeholder="Description"
-          className="mb-2 p-2 border rounded w-full"
+          className="mb-2 p-2 border h-5 rounded w-full"
         />
-        <select
-          name="priority"
-          value={formData.priority}
-          onChange={handleChange}
-          className="mb-2 p-2 bg-white border rounded w-full"
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <div className="flex justify-end gap-2">
-          <Button
-            onClick={() => setIsEditing(false)}
-            className="px-4 py-2 bg-red-500 text-white rounded"
+
+        <div className="flex justify-between gap-2">
+          <select
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+            className="mb-2 p-2  bg-white border rounded w-1/3 float-left"
           >
-            Cancel
-          </Button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Save
-          </button>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <div className="flex justify-center gap-2 items-center">
+            <Button
+              onClick={() => setIsEditing(false)}
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -109,26 +119,46 @@ const Task = (props: TaskProps) => {
   // Render View UI
   return (
     <div
+
       className={`task flex ${
         status === "completed" ? "hidden" : "opacity-100"
-      } p-2 py-4 gap-2 border rounded-md bg-white w-96 `}
+      } p-2 py-4 gap-2 border rounded-md text-black bg-white w-96 `}
     >
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-center gap-2">
           <h3 className="font-bold text-xl capitalize">{title}</h3>
         </div>
-        <p className="capitalize">{description}</p>
-        <span className="w-full flex gap-2 font-semibold">Priority-<span className={`priority-badge ${colorPriority} text-sm w-min px-2 capitalize `}>{priority}</span></span>
+        <p className="capitalize  truncate pr-2">{description}</p>
+        <span className="w-full flex gap-2 font-semibold">
+          Priority-
+          <span
+            className={`priority-badge ${colorPriority} text-sm w-min px-2 capitalize `}
+          >
+            {priority}
+          </span>
+        </span>
+        <span className="w-full flex gap-2 font-semibold">
+          Due Date-
+          <span className={`priority-badge  text-sm w-min px-2 capitalize `}>
+            {dueDay}
+          </span>
+        </span>
         <div className="flex justify-end gap-2 mt-2">
+          <Link
+            to={`task-detail/${id}`}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            View
+          </Link>
           <button
             onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="px-4 py-2 bg-black- text-white rounded"
           >
             Edit
           </button>
           <Button
             onClick={handleStatusChange}
-            className="px-4 py-2 bg-black-500 text-white rounded"
+            className="px-4 py-2 bg-green-500 text-white rounded"
           >
             Done
           </Button>

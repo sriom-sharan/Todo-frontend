@@ -59,7 +59,7 @@ const AddTask = () => {
 
   return (
     <Drawer>
-      <DrawerTrigger className="flex w-56 text-white justify-center gap-2 items-center absolute bottom-4 right-4 bg-black">
+      <DrawerTrigger className="flex w-56 text-white justify-center gap-2 items-center fixed bottom-4 right-4 bg-zinc-700">
         <span className="bg-white text-black rounded-full size-10 text-center flex justify-center items-center">
           <Plus size={22} />
         </span>
